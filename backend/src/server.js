@@ -94,7 +94,7 @@ app.use("/api/export", exportRoutes);
 const frontendDistPath = path.join(__dirname, "../../frontend/dist");
 app.use(express.static(frontendDistPath));
 
-app.get("*", (req, res, next) => {
+app.use((req, res) => {
   if (req.originalUrl.startsWith("/api")) {
     return res.status(404).json({ message: `API route ${req.originalUrl} not found` });
   }
