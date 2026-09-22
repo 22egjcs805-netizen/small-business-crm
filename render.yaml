@@ -2,7 +2,7 @@ services:
   # Backend API Web Service
   - type: web
     name: small-business-crm-backend
-    env: node
+    runtime: node
     plan: free
     rootDir: backend
     buildCommand: npm install && npx prisma generate && npx prisma db push && node prisma/seed.js
@@ -16,8 +16,9 @@ services:
         value: production
 
   # Frontend Static Site
-  - type: static
+  - type: static_site
     name: small-business-crm-frontend
+    runtime: static
     plan: free
     rootDir: frontend
     buildCommand: npm install && npm run build
