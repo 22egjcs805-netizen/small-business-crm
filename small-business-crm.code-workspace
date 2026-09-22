@@ -2,7 +2,7 @@
   "folders": [
     {
       "name": "Backend (API & Database)",
-      "path": "../backend"
+      "path": "./backend"
     },
     {
       "name": "Frontend (React & Vite)",
