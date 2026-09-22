@@ -1,36 +1,14 @@
 services:
-  # Backend API Web Service
   - type: web
-    name: small-business-crm-backend
+    name: small-business-crm
     runtime: node
     plan: free
-    rootDir: backend
-    buildCommand: npm install && npx prisma generate && npx prisma db push && node prisma/seed.js
-    startCommand: node src/server.js
+    buildCommand: npm run build
+    startCommand: npm start
     envVars:
       - key: PORT
-        value: 5000
+        value: 10000
       - key: DATABASE_URL
         value: file:./dev.db
       - key: NODE_ENV
         value: production
-
-  # Frontend Static Site
-  - type: static_site
-    name: small-business-crm-frontend
-    runtime: static
-    plan: free
-    rootDir: frontend
-    buildCommand: npm install && npm run build
-    staticPublishPath: dist
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
-    envVars:
-      - key: VITE_API_URL
-        fromService:
-          type: web
-          name: small-business-crm-backend
-          property: host
-          transform: https://%s/api

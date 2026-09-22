@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const path = require("path");
 
 const prisma = require("./config/database");
 
@@ -25,20 +26,6 @@ app.use(express.json());
 app.use((req, res, next) => {
   console.log(`[${new Date().toLocaleTimeString()}] ${req.method} ${req.originalUrl}`);
   next();
-});
-
-/*
-|--------------------------------------------------------------------------
-| Health & Base Check
-|--------------------------------------------------------------------------
-*/
-app.get("/", (req, res) => {
-  res.json({
-    status: "online",
-    message: "Small Business CRM API is running successfully!",
-    timestamp: new Date().toISOString(),
-    documentation: "/api/dashboard",
-  });
 });
 
 /*
@@ -101,13 +88,32 @@ app.use("/api/export", exportRoutes);
 
 /*
 |--------------------------------------------------------------------------
-| 404 & Global Error Handling
+| Serve Frontend Single Page App (Production / Unified Hosting)
 |--------------------------------------------------------------------------
 */
-app.use((req, res) => {
-  res.status(404).json({ message: `Route ${req.originalUrl} not found` });
+const frontendDistPath = path.join(__dirname, "../../frontend/dist");
+app.use(express.static(frontendDistPath));
+
+app.get("*", (req, res, next) => {
+  if (req.originalUrl.startsWith("/api")) {
+    return res.status(404).json({ message: `API route ${req.originalUrl} not found` });
+  }
+  res.sendFile(path.join(frontendDistPath, "index.html"), (err) => {
+    if (err) {
+      res.json({
+        status: "online",
+        message: "Small Business CRM API is running successfully!",
+        documentation: "/api/dashboard",
+      });
+    }
+  });
 });
 
+/*
+|--------------------------------------------------------------------------
+| Global Error Handling
+|--------------------------------------------------------------------------
+*/
 app.use((err, req, res, next) => {
   console.error("Unhandled error:", err);
   res.status(500).json({ message: "Internal server error", error: err.message });
@@ -122,7 +128,7 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`====================================================`);
-  console.log(`  🚀 CRM Backend Server listening on http://localhost:${PORT}`);
+  console.log(`  🚀 CRM Unified Server listening on port ${PORT}`);
   console.log(`  📊 Database connected (SQLite at dev.db)`);
   console.log(`====================================================`);
 });
