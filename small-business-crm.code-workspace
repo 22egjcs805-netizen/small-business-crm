@@ -1,0 +1,15 @@
+{
+  "folders": [
+    {
+      "name": "Backend (API & Database)",
+      "path": "../backend"
+    },
+    {
+      "name": "Frontend (React & Vite)",
+      "path": "./frontend"
+    }
+  ],
+  "settings": {
+    "editor.formatOnSave": true
+  }
+}
